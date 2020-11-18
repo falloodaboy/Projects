@@ -1,0 +1,28 @@
+Parts to keep track of:
+global variables
+lives
+# of enemies
+invincible time in frames
+
+
+
+MVC:
+View:
+Draw the player
+Draw the missile
+Draw the walls
+
+
+Model:
+player
+enemy
+projectile
+
+Controller:
+player_update function that updates the players position on the board
+ 
+
+
+60 pixels across. 60/5 = 12 --> find intervals where it might be on x and then load the location into a variable. based on this, load into
+another register the row value for the matrix. Divide y by 5 --> based on value, load the col into another register. Then check if that entry
+in the matrix is a 0 or 1. if it is a 1, check along the entire y-axis to make sure player can't move there.

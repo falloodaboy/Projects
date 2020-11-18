@@ -1,0 +1,52 @@
+System.out.println("Par1: " + new BigInteger(par1).toString());
+System.out.println("Par2: " + new BigInteger(par2).toString());
+System.out.println("Count: " + new BigInteger(yeet.getVal()).toString());
+System.out.println("num after Multiplication: " + new BigInteger(num).toString());
+
+
+
+System.out.println("Par1: " + new BigInteger(par1).toString());
+System.out.println("Par2: " + new BigInteger(par2).toString());
+System.out.println("Count: " + new BigInteger(yeet.getVal()).toString());
+System.out.println("num after Multiplication: " + new BigInteger(num).toString());
+
+
+	 	//if the product of the next is larger than par1, then subtract par2 and par1 to get remainder.
+	 		
+	 		//  if(par1.length < par2.length){
+	 		// 	int diff = par2.length - par1.length;
+	 		// 	byte[] newpar1 = new byte[par2.length];
+
+	 		// 	byte pad = (byte) 0;
+	 		// 	if(par1[0] < 0) //probably won't need this as xgcd does not test with negative numbers.
+	 		// 		pad = (byte) 0xFF;
+	 			
+	 		// 	for(int i=0; i < diff; i++){
+	 		// 		newpar1[i] = pad;
+	 		// 	}
+
+	 		// 	for(int i=diff; i < par1.length; i++)
+	 		// 		newpar1[i] = par1[i];
+
+	 		// 	par1 = newpar1;
+	 		// }
+	 		// else if(par1.length > par2.length){
+	 		// 	int diff = par1.length - par2.length;
+	 		// 	byte[] newpar2 = new byte[par1.length];
+
+	 		// 	byte pad = (byte) 0;
+	 		// 	if(par2[0] < 0) //probably won't need this as xgcd does not test with negative numbers.
+	 		// 		pad = (byte) 0xFF;
+	 			
+	 		// 	for(int i=0; i < diff; i++){
+	 		// 		newpar2[i] = pad;
+	 		// 	}
+
+	 		// 	for(int i=diff; i < par2.length; i++)
+	 		// 		newpar2[i] = par2[i];
+
+	 		// 	par2 = newpar2;
+	 		// }
+	 		// else{
+	 		// 	//do nothing.
+	 		// }

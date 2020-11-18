@@ -1,0 +1,8 @@
+7
+Inigo,NotLeftHanded,500.0,0.0,Who is the six fingered man?,Count Rugen,Am I left handed?,No
+Vizzini,VerySmart,200.0,300.0,Who is the smartest?,Vizzini,What is my favorite word?,Inconceivable
+Fezzik,BruteSquad,1000.0,0.0
+Westley,DreadPirate,400.0,100.0,What is an R.O.U.S.?,They do not exist,Am I really Roberts?,No
+Z,maz,200.0,0.0
+Penis,Penis,310.0,0.0
+Penis,dick,4900.0,0.0

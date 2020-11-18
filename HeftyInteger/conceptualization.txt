@@ -1,0 +1,89 @@
+
+-7 = ~ 0111 + 1 = 1110 + 1 = 1111
+
+1000 = ~ 0111 + 1 = 10000 <-- why sign_extention important in negation method.
+
+
+
+
+
+multiplication:
+
+  469
+x 228
+ 3752
+    0
+
+par1: [4,6,9]
+par2: [2,2,8]
+prod: [0,0,0,0,0,0]
+carry = 0;
+1st iteration:
+starts at index a.length - 1
+
+8 * 9 + carry = 72 
+cur: [0,0,0,0,0,2]
+carry = 7
+8 * 6 + carry = 55
+cur: [0, 0, 0, 5, 2]
+carry = 5
+8 * 4 + carry = 37
+cur: [0, 0, 7, 5, 2]
+carry = 3
+reached end of par1, 
+set last index to carry: cur: [0, 3, 7, 5, 2]
+
+
+For each iteration, create a new byte[] size of 2*a.length and store this iterations multiplied number in this. Then add it to a product, then repeat the process.
+will still need the carry and at the end of each iteration, need to put carry in its own slot. must keep a count of i in the iteration to add it to the final slot.
+
+
+
+
+
+
+
+
+Code Trace:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+par1 = 36
+par2  = 5
+
+36 / 5 = 6 R6
+
+[3, 6]
+[5]
+
+256 / 13
+
+while(prod < par2)
+	count++
+	par1 * count;
+
+return count;
+
+
+

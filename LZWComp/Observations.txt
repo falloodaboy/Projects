@@ -1,0 +1,27 @@
+Compress:
+binstdout,write(int x, int r) and readInt(int r) work together using the codeword width to read and write data in bits 
+will probably have to use these two methods to vary the width of the codeword from 9 to 16.
+still need to maintain R and the string of single chars.
+
+
+
+
+Expand:
+
+
+
+
+
+Variability:
+Naive attempt would be to simply reset whenever codebook is full for both compression and expansion.
+
+
+
+Reset:
+
+
+
+
+
+
+Monitor:

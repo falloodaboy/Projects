@@ -1,0 +1,38 @@
+Used HashMap for VINs even though String comparison is O(w) since string length is constant
+runtime will be O(logn).
+
+Used HashMaps instead of Binary insertion sort arrays even though the latter has less overhead because not sure if allowed to use code outside of JCL and book code.
+
+allowed each model's internal array space equal to the length of the cars file so that it can accomodate all types and doesn't need to process the Cars list twice.
+Saves time but increases space required.
+
+
+Had to use HashMap so that runtime remains log(n) for add, remove, and update mainly because of swim and sink.
+Load factor of Hashmap is kept at 0.50 to ensure faster lookups on average even if it costs more space.
+
+
+
+How to Write Documentation:
+Data structure includes a few classes including:
+
+Brand: contains a hashmap of the Model class stored by string
+Model: contains two PQs with indexable arrays for price and heap for this model as well as an arraylist of CarObject of this model. It also contains a car array 
+to help with associating a number with a given Car k.
+CarObject: contains the car, the index for its position in the main data structure price heap and another index for its position in the main mileage heap.
+
+For this project, I mostly used the implementation as given in the book using int values associated with a Car k and using this int in both of the pqs 
+of price and mileage. To allow the user to index by specific make and model for both price and mileage, the main data structure keeps a Hashmap of 
+Brands object which contains a Hashmap of all Models associated with this brand, each of which maintains its own indexable pqs of price and mileage.
+In order to find the minimum by make and model, this data structure accesses the proper Brand from the HashMap, from which it accesses the proper Model
+and returns the first item on the respective pq. 
+
+The data structure contains redundant elements in order to allow for a fast lookup up time. For example, in order to allow the user to simply find the minimum
+price or mileage car from a specific make or model or from all cars, pqs for specific cars and all cars were kept to provide fast lookup. The use of HashMaps also
+was included to allow slightly faster lookup times of O(1) (assuming no collisions) rather than a TreeMap which has a search time of O(logn). Because the HashMaps
+used in this data structure need to maintain the O(1) lookup time, it is essential that there are no collisions. That is why the HashMaps are all created with 
+2*max number of cars in cars.txt to allow for the hashCode() to ensure proper distribution. The Hashmaps provided by Java also contain a collision resolution
+scheme where if a certain number of elements all map to one cell, then that cell is represent by a TreeMap, ensuring the O(logN) requirement for insert, delete,
+and update. 
+
+This data structure uses more space because of the HashMap implementations as opposed to a TreeMap implementation but this is to make the lookup faster in
+the practical sense with a finite number of inputs as opposed to the asymptotic behavior. 

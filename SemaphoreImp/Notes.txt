@@ -1,0 +1,45 @@
+Setup on local and on thoth, create backup folder.
+kmalloc()- use flag GFP_ATOMIC to prevent kernel from sleeping the semaphore.
+Use interleaving to check for deadlocks
+review spinlocks, test_and_set
+Create check on kmalloc and kfree to make sure they are balanced. Write separate program from this.
+Write precautions in semaphore function to prevent malfunction in kernel.
+Write QueueTester to make sure the Queue isn't faulty.
+
+
+call spin_lock_init in the create semaphore function.
+Queue:
+Need a pointer to the end of the queue to add.
+need pointer to the front of the list to remove.
+if I just put a pointer to a queue in the struct VS the queue in struct?
+give memory in the create function.
+allocate more memory in the up fuction.
+free memory in the down function.
+look at sched.h for task_struct
+
+
+Defensive Programming:
+1. do not allow negative 
+
+
+
+Debug process:
+1. look for allocated nodes in a list which do not set their next value to NULL.
+2. Check to make sure all allocated nodes are freed (do a trace if necessary)
+3. 
+
+
+for the kmallocked global semlist nodes, call kfree on pointers on and from the head of gsemlist.
+for kmallocked semaphore queue list nodes, call kfree on pointers on the sementry nodes in the queue.
+
+*Check the wake_up_process to make sure that it doesn't require a & before the parameter.
+
+Possible Race Conditions:
+1. 
+	P1 does a down operation without sleeping.
+	P1 is preempted.
+	P2 calls to close semaphore P1 downed on.
+	P2 does this and finishes.
+	P1 tries to access semaphore which doesn't exist.
+
+2.

@@ -1,0 +1,203 @@
+Need function to convert from VA to PA and PA to VA.
+Need to only allocate the amount of memory as dictated by the memory split.
+Need to create mechanism for finding out offset.
+Need a way to keep track of the number of nodes in the FIFO queue in case it degenerates to regular FIFO
+Need to account for edge cases of linked list.
+increment counter for FIFO when insert_tail
+FIFO queue coordinates with memory array by returning the page number of the removed page. Physical memory can then use this 
+
+
+
+testing:
+	create sample program y.trace for 8 frames with 4 KB pages and 1:3 memory split. 
+	test cases:
+		1. test proc 0 page replacement with a dirty page. 
+		2. test proc 1 page replacement with a non-dirty page.
+		3. test page faults to see if the pages are properly stored.
+		4. test the reference for proc 0 to make sure it is working. (page fault, ref a specific page, page fault again and see if the referenced page is removed)
+
+
+results (before mods):
+Algorithm: Second Chance
+Number of frames: 8
+Page size: 4 KB
+Total memory accesses: 13
+Total page faults: 12
+Total writes to disk: 4
+
+
+
+y.trace:
+format: <pgnm, ref, dirty>
+p1: 2 frames
+
+p2: 6 frames
+
+p1FIFO:  <0x0ffe7, false, false> -> <0x3002c, true, false>
+
+
+p2FIFO: <0x20000, false, false> -> <0x30006, false, true> -> <0x30000, false, false> -> <0x0fffe, false, true> -> <0x30004, false, false> -> <0x30002, true, false>
+
+
+
+
+
+writes to disk: 3
+pgflts: 12
+memaccesses: 13
+
+test process 1 with memory accesses and see if page hit is working appropriately (first cause page replacement, then test with page hit one, then test separately with multiple page hits)
+
+
+
+s 0x1fffff50 0
+s 0x3004d960 0
+l 0x200000f8 0
+l 0x0ffe7448 0
+l 0x3002c678 0
+
+**c ignores leading 0s on page addresses.
+
+
+need to be careful about writing to disk. Current implementation resets the dirty bit when a page is reloaded. On page hit, if the mode is s then keep it s.
+ 
+
+
+
+
+
+
+*code is removing a page from physical memory that is referenced.
+
+
+
+
+
+
+
+
+
+
+Statistics:
+8 frames 4 KB Page Size Trace 1:
+split:
+1:1 - page faults: 103,539 , writes to disk: 62,306
+1:3 - page faults: 163,510 , writes to disk: 81,767 
+3:1 - page faults: 93,875  , writes to disk: 51,215
+3:5 - page faults: 130,174 , writes to disk: 71,222
+5:3 - page faults: 84,408  , writes to disk: 54,747
+
+8 frames 4 KB Page Size Trace 2:
+
+1:1 - page faults: 42,123 , writes to disk: 41,670
+1:3 - page faults: 62,069 , writes to disk: 41,662 
+3:1 - page faults: 42,930  , writes to disk: 41,925
+3:5 - page faults: 42,068 , writes to disk: 41,641
+5:3 - page faults: 42,358 , writes to disk: 41,720
+
+
+8 frames 4 KB Page Size Trace 3:
+1:1 - page faults: 32,801 , writes to disk: 16,776
+1:3 - page faults: 15,949 , writes to disk: 8,860 
+3:1 - page faults: 72,803 , writes to disk: 30,991
+3:5 - page faults: 19,487 , writes to disk: 10,679
+5:3 - page faults: 44,717 , writes to disk: 17,016
+
+
+
+
+8 frames 4 MB Page Size Trace 1:
+1:1 - page faults: 1,027  , writes to disk: 639
+1:3 - page faults: 23,635 , writes to disk: 12,964
+3:1 - page faults: 452    , writes to disk: 270
+3:5 - page faults: 3,391  , writes to disk: 1,861
+5:3 - page faults: 502    , writes to disk: 306
+
+
+
+8 frames 4 MB Page Size Trace 2:
+1:1 - page faults: 105 , writes to disk: 72
+1:3 - page faults: 247 , writes to disk: 151
+3:1 - page faults: 633 , writes to disk: 265
+3:5 - page faults: 127 , writes to disk: 91
+5:3 - page faults: 137 , writes to disk: 91
+
+
+8 frames 4 MB Page Size Trace 3:
+1:1 - page faults: 706    , writes to disk: 430
+1:3 - page faults: 667    , writes to disk: 269
+3:1 - page faults: 43,753 , writes to disk: 22,861
+3:5 - page faults: 277    , writes to disk: 169
+5:3 - page faults: 10,034 , writes to disk: 5,643
+
+
+
+
+
+
+
+1024 frames 4 KB Page Size Trace 1:
+1:1 - page faults: 40,168 , writes to disk: 39,342
+1:3 - page faults: 40,169 , writes to disk: 39,090
+3:1 - page faults: 40,168 , writes to disk: 39,598
+3:5 - page faults: 40,168 , writes to disk: 39,214
+5:3 - page faults: 40,168 , writes to disk: 39,470
+7:9 - page faults: 40,168 , writes to disk: 39,278
+9:7 - page faults: 40,168 , writes to disk: 39,406
+
+
+
+
+
+1024 frames 4 KB Page Size Trace 2:
+1:1 - page faults: 41,328 , writes to disk: 40,263
+1:3 - page faults: 41,328 , writes to disk: 40,264
+3:1 - page faults: 41,328 , writes to disk: 40,260
+3:5 - page faults: 41,328 , writes to disk: 40,263
+5:3 - page faults: 41,328 , writes to disk: 40,260
+7:9 - page faults: 41,328 , writes to disk: 40,263
+9:7 - page faults: 41,328 , writes to disk: 40,263
+
+
+1024 frames 4 KB Page Size Trace 3:
+1:1 - page faults: 1,589 , writes to disk: 921
+1:3 - page faults: 1,589 , writes to disk: 1,174
+3:1 - page faults: 1,589 , writes to disk: 666
+3:5 - page faults: 1,589 , writes to disk: 1,046
+5:3 - page faults: 1,589 , writes to disk: 793
+7:9 - page faults: 1,589 , writes to disk: 985
+9:7 - page faults: 1,589 , writes to disk: 857
+
+
+
+
+1024 frames 4 MB Page Size Trace 1:
+1:1 - page faults: 94, writes to disk: 0
+1:3 - page faults: 94, writes to disk: 0
+3:1 - page faults: 94, writes to disk: 0
+3:5 - page faults: 94, writes to disk: 0
+5:3 - page faults: 94, writes to disk: 0
+7:9 - page faults: 94, writes to disk: 0
+9:7 - page faults: 94, writes to disk: 0
+
+
+
+1024 frames 4 MB Page Size Trace 2:
+1:1 - page faults: 57 , writes to disk: 0
+1:3 - page faults: 57 , writes to disk: 0
+3:1 - page faults: 57 , writes to disk: 0
+3:5 - page faults: 57 , writes to disk: 0
+5:3 - page faults: 57 , writes to disk: 0
+7:9 - page faults: 57 , writes to disk: 0
+9:7 - page fautls: 57 , writes to disk: 0
+
+
+
+1024 frames 4 MB Page Size Trace 3:
+1:1 - page faults: 29, writes to disk: 0
+1:3 - page faults: 29, writes to disk: 0
+3:1 - page faults: 29, writes to disk: 0
+3:5 - page faults: 29, writes to disk: 0
+5:3 - page faults: 29, writes to disk: 0
+7:9 - page faults: 29, writes to disk: 0
+9:7 - page faults: 29, writes to disk: 0

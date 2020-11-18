@@ -1,0 +1,31 @@
+--> Goes in the Constructor of WordPuzzleSolution
+// row = r;
+		// col = c;
+		// file = text;
+		// try{
+		// 	fscan = new Scanner(file);
+		// }
+		// catch(IOException e){
+		// 	e.printStackTrace();
+		// }
+		// catch(Exception e){
+		// 	System.out.println("non-IO error has occurred");
+		// }
+
+		// init();
+
+--> Goes in WordPuzzleSolution
+// private final void init(){
+	// 	if(row > 0 && col > 0){
+	// 		fscan.nextLine();//fscan.nextLine();
+			
+	// 		grid = new char[row][col];
+	// 		for(int i=0; i < row; i++){
+	// 			String hold = fscan.nextLine();
+
+	// 			for(int j=0; j < col; j++){
+	// 				grid[i][j] = hold.charAt(j);
+	// 			}
+	// 		}
+	// 	}
+	// }

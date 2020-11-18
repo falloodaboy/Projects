@@ -1,0 +1,241 @@
+*keep the number of shared variables to a minimum
+*does a tour guide take on multiple visitors up to 10? 
+(each tourguide needs to keeps an internal count of how many visitors it has allowed).
+tourguides must wait for visitors until they serve ten or there are no more tickets.
+*Does a tour guide need to check if there is anyone inside the museum
+
+***gcc -g -m32 -o museumsim -I /afs/pitt.edu/home/m/z/mzw14/private/sysimage/linux-2.6.23.1/include/ museumsim.c
+
+numtour <= 10(numguides)
+tickets made available each day is equal to 10 per guide (random process)
+if no more tickets, there can be no more visitors
+visitors need tickets to tour
+guide needs atleast one tourist to go inside the museum
+guides leave together.
+only two guides can be in the museum at any given time.
+guides can leave only if there are no more visitors, they have served 10 visitors, or if there are no remaining tickets.
+Readers-Writers problem for the boolean for the Museum status shared variable.
+
+each guide will need to maintain an integer for how many tickets it has served.
+
+three types of shared variables:
+shared variables among only tour guides.
+	need to wait for each other to finish.
+	only 2 guides can be in the museum at any time.
+	
+
+shared variable among only visitors.
+	only one visitor can access the ticket machine at a time.
+	need to check if the museum is at full capacity. Wait for it to empty.
+	
+
+shared variable among visitors and guides.
+	visitors need to signal they are ready to tour
+	tour guides need to signal they are ready to tour.
+	visitors need to wait for a tour guide to be available.
+	tour guides need to wait for atleast one visitor to be available.
+	visitors update shared variable and tour guides check when all visitors have left and no more new tickets.
+
+Shared Variables:
+
+tickets, integer = 10(tourguide). decrement whenever a visitor arrives. protection binary semaphore added. 
+working, semaphore, counting = 1. guides up when it is done working and all other conditions are met for leaving. Down if it is working (touring). 
+musfull, semaphore, counting = 2. At most 2 guides can be in the building at any given time. 
+musempty, semaphore, counting = 0. Tourist ups whenever inside the museum, downs whenever leaving. protection binary semaphore.
+
+
+possible Deadlocks:
+visitor and guide arrive at museum and wait on each other forever.
+
+
+
+possible Race Conditions:
+
+
+
+
+
+
+
+
+
+
+
+Summary:
+	Visitor:
+		needs to check if tickets available
+		needs to check if museum is full
+		needs to check if museum is open or closed.
+		needs to get a guide to tour.
+		
+	Guide:
+		needs to check if museum is closed.
+		needs to check if atleast 1 visitor is there to open the museum
+		needs to check if there are no visitors when it leaves to close the museum
+		needs to check how many visitors it has served
+		needs to make sure all other guides are done. 
+		needs to make sure there are no visitors in the museum, or no more tickets are left.
+		needs to check how many tour guides are in the museum at any given time (only 2 allowed)
+		needs to check if the last visitors for the day have arrived.
+
+
+shared variables:
+		tickets (integer)
+		accessBooth (binary semaphore for the tickets)
+		isMuseumOpen (Boolean)
+		accessMuseumStatus (binary semaphore for isMuseumOpen)
+
+		Visitors (counting semaphore, whenever visitors arrive)
+		Guides (counting semaphore, is updated whenever guides arrive)
+		buffermutex (protection semaphore for the tourMuseum and openMuseum)
+		slots (integer, initially equal to 0. updated by the visitor and guide processes)
+		numPeopleInMuseum (integer, number of people inside the museum)
+		accessCountOfPeople(mutex sem for numPeopleInMuseum)
+		guidesInMuseum (counting semaphore = 2. Only allows 2 guides to be in a museum at a time)
+		lastPerson (binary semaphore = 0, signaled by last visitor to let the guides know to leave.)
+		GuidesLeft (integer = 0, used to keep track of how many guides are left inside the museum)
+		accessGuidesleft (binary semaphore init = 1 for the GuidesLeft integer).		
+
+
+
+guideBufferEmpty, GuideBufferFull, protection semaphore m, and integer x (whenever a new guide process arrives, it increments x by 10)
+
+for multiple accesses, need to include a protection binary semaphore to make sure that access does not result in a deadlock.
+
+think about Dining Philosopher's problem and Bounded Buffer problem. (will need extra semaphores for accessing two semaphores at a time.)
+
+
+
+problems here:
+	visitor and guide need to synchronize when the visitors tour and when the guides fill slots.
+	guides inside the museum need to synchronize when they are both done so they can leave together. (guides outside leave whenever there are no more tickets available)
+	last guide has to close the Museum and release all other guides to go home. Needs to know when it is the last guide in the Museum. (numPeopleInMuseum) and binary semaphore(init = 1)
+
+
+ get the number of guides left in the museum. If it is 2 then subtract one, signal again on the lastPerson semaphore and simply return.
+ if it is 1 then acquire a mutex to the guidesInMuseum, signal twice on the GuidesInMuseum, then decrement the value of GuidesLeft and return.
+
+what happens if there is only one guide? should it just leave? (don't need to put the logic just to preserve the guidesMutex)
+
+
+
+rules for Mutexes:
+• Incorrect use of semaphore operations:
+	• signal (mutex) …. wait (mutex)
+	• wait (mutex) … wait (mutex)
+	• Omitting of wait (mutex) or signal (mutex) (or both)
+	• Deadlock and starvation are possible. 
+
+
+gcc -g -m32 -o museumsim -I /afs/pitt.edu/home/m/z/mzw14/private/sysimage/linux-2.6.23.1/include/ museumsim.c
+
+
+Things left to do:
+1. *setup/test provided kernel with trafficsim (recompile with the new unistd.h file both trafficsim.c and museumsim.c)
+2. *Finish writing the museumsim.c file.
+3. *find how to get start time to be 0 no matter if it is the guide or the visitor.
+4. Test using different cases.
+
+
+
+need some mechanism to check if the visitors in the museum are done. (visitor process could set this)
+how to make it so that whenever it so that guides check to see if visitors are done before waiting on the visitors semaphore.
+
+
+last visitor could check how many guides are left inside the building.
+
+2 visitors arrive, wait on Guides, guide 1 signals 2 final times and waits on lastPerson, visitor 1 finishes, visitor 2 sees it is the last person and signals lastPerson as it leaves,
+guide 2 still has slots left. guide 1 downs on guideMutex and then leaves, changing lastPerson to 1. Visitor 3 and 4 now arrive and wait on Guides, guide 2 serves them and waits on lastPerson.
+
+
+
+case 1: two guides are inside the museum and are serving tickets.
+case 2: only one guide is inside the museum, no more guides are waiting, no more visitors are coming (guide should not be waiting for another guide to finish)
+case 3: less than 2 guides inside the museum, no more visitors are coming.
+
+
+guide: 
+case 1: check if noone in Museum -> check if other guide is there -> if yes, check if guide is waiting -> if guide is waiting, release it and leave -> if the guide is not waiting, set this guide to waiting and wait for the other guide to finish.
+*keep a variable for guideWaitingToLeave and guidesLeft in the museum. If guideWaitingToLeave is false and guidesLeft in museum is 1, then simply leave. If guideWaiting to Leave is true 
+and guidesLeft = 1, then signal on the semaphore and leave. 
+
+*any guide summoned to enter the museum must wait for both guides to leave first.
+Summary:
+	Visitor:
+		needs to check if tickets available
+		needs to check if museum is full
+		needs to check if museum is open or closed.
+		needs to get a guide to tour.
+		
+	Guide:
+		needs to check if museum is closed.
+		needs to check if atleast 1 visitor is there to open the museum
+		needs to check if there are no visitors when it leaves to close the museum
+		needs to check how many visitors it has served
+		needs to make sure all other guides are done. 
+		needs to make sure there are no visitors in the museum, or no more tickets are left.
+		needs to check how many tour guides are in the museum at any given time (only 2 allowed)
+		needs to check if the last visitors for the day have arrived.
+
+
+need to prevent guides from waiting on visitors who will never show up. 
+visitor can notify whenever it is the last one when it arrives. 
+OpenMuseum, during each iteration has to confirm the last visitors for the day have not arrived before waiting for more visitors.
+
+*each guide could check how many visitors have been served and how many guides are left and if there are waiting to leave.
+
+
+before processing visitors, each guide can check if there is another guide, whethere the other guide is done, and how many visitors are left for the day. (preemptive approach)
+
+
+
+**could make a semaphore with value equal to the number of visitors for guides to down on. last visitor ups this 2 times before leaving. (guides who executed before the final visitor finished would block on this. Final visitor would up 2 times and then leave.)
+visitor makes tickets 0 and ups on the semaphore 2 times to free any guides left. 
+
+if there are more tickets than there are visitors, then the last visitor makes the tickets 0 and then calls up on Visitors 2 times to make sure the guides leave.
+
+
+(does all of this as it leaves)
+have a semaphore equal to the number of visitors for the day and a boolean, last visitor sets ticket count to 0, sets goneHome to true and makes sure to up 2 times on this sem to free at most 2 blocked guides. 
+
+each guide must down on the semaphore and check the boolean before downing on the Visitors semaphore.
+
+
+for tour guides to leave:
+	need a boolean with mutex: guideWaitingToLeave
+	need an integer of the guide count in the museum with mutex: GuidesLeft.
+	need a semaphore for a guide to wait on (should be set to 0).
+	need a mutex so that excludes when both guides are leaving.
+
+if a guide is done, it must check if there is another guide in the museum, if there isn't then it must wait for the last person to leave before leaving and allowing another guide to come in.
+
+if a guide is done, it must check if there is another guide in the museum, if there is, it must check if this guide is waiting, if it is not then this process sets guidewaitingtoleave to true and waits on sem.
+
+if a guide is done, it must check if there is another guide in the museum, if there is, it must check if this guide is waiting, if it is, then this guide must wait for the last person to leave, then free the other guide and then leave itself.
+
+
+2nd tourguide doesn't arrive until 1st tour guide finishes. (but what happens if a guide arrives in between the time of this guide waiting on the lastPerson to leave)
+
+could have tourguideLeave wait on lastPerson first then determine how many guides are inside the museum.
+
+also could have a tourguide waiting to leave, 10 visitors tour the museum, tourguide 2 arrives, and 1 more person is waiting in line.
+
+guide needs to check if the lastPerson in the museum has left.
+guide also needs to check if there is another guide in the museum, whether that guide is waiting to leave.
+guide also needs to check if the total number of visitors have come and gone. 
+
+trouble case: (params: 11 2 50 2 100 70 2 100)
+the first 11 visitors arrive and wait on Guides in the first case.
+tourguide 1 arrives, Opens Museum, and ups on Guides 10 times and waits on lastPerson.
+first 10 visitors then tour the museum.
+
+
+second tourguide is getting stuck on the visitors semaphore. 
+
+
+tourguide 2 arrives at this time.
+first 10 visitors then leave, last one ups on LastPerson
+then tourguide starts to leave 
+  
+
+

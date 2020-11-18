@@ -1,0 +1,52 @@
+Regfile- 
+Control sets WE1 WE2, WS, ReadSelect0, ReadSelect1
+WriteData0: ALU, RAM, immediate, PC + 1
+WriteData1: ALU
+ReadData0: ALU, RAM, Hex Register, branch
+ReadData1: ALU, RAM
+
+ALU-
+Control sets ALUop, A, B
+A: rs, immediate
+B: rt, immediate 
+LZ:
+GZ:
+Z:
+
+RAM-
+Control sets address, Data Input
+Data Input: Regfile
+Data Output: Regfile
+
+ROM-Should increment sequentially
+
+Hex Display-
+Control sets register enabled.
+
+
+Halt-
+Control sets Halt
+
+PC-
+J/Br Mux sets the PC, default is PC + 1
+Input: immediate
+0 extender-
+A:
+B:
+
+s extender-
+A:
+B:
+
+
+
+
+
+Control Signals:
+WriteSelect
+WriteEnabled0
+WriteEnabled1
+WriteData0
+WriteData1
+
+

@@ -1,0 +1,165 @@
+/*
+	shared Variables:
+	1. Visitors- (counting semaphore: initial value is 0)
+	2. Guides-	 (counting semaphore: inital value is 0)
+	3. tickets-	 (integer: initial value is tickets generated)
+	4. accessBooth- (binary semaphore: initial value is 1)
+	5. numPeopleInMuseum- (integer: initial value is 0)
+	6. accessCountOfPeople- (binary semaphore: initial value is 1)
+	7. guidesInMuseum-		(counting semaphore: initial value is 2)
+	8. guidesMutex-			(binary semaphore: initial value is 1. used to control access to the guidesInMuseum semaphore)
+	9. isMuseumOpen-		(boolean: initial value is FALSE)
+	10. accessMuseumStatus-	(binary semaphore: initial value is 1)
+	11. lastPerson- 		(binary semaphore: initial value is 0. Used by the last visitor process to release the guides)
+	12. GuidesLeft-			(integer, incremented whenever a guide opens the museum. Decrements whenever the guide leaves)
+	13. accessGuidesLeft-	(binary semaphore: initial value is 1)
+	14. GuideWaitingToLeave (boolean: initial value is false)
+	15. GWaitMutex			(binary semaphore: initial value is 1)
+	16. numVis 				(Counting Semaphore: initial value is numvisitors)
+	17. goneHome			(boolean- initial value is false)
+	18. accessGH			(binary semaphore- initial value is 1)
+	19. GWaitSem			(counting semaphore- initial value is 0)
+	
+	11 semaphores. 7 shared variables
+
+*/
+
+
+void visitorArrives(){
+	//needs to take a ticket, if no tickets available, then it leaves.
+	wait(accessBooth);
+		if(tickets == 0)
+			signal(accessBooth);
+			return;
+		tickets--;
+	signal(accessBooth);
+
+	signal(Visitors);
+
+}
+
+void tourMuseum(){
+
+	//should check if it is the first person in, then should 
+	wait(Guides);
+
+	wait(accessCountOfPeople);
+
+	numPeopleInMuseum++;
+
+	signal(accessCountOfPeople);
+	
+	nanosleep(2000);
+
+
+
+}
+
+void visitorLeaves() {
+	wait(accessCountOfPeople);
+
+	numPeopleInMuseum--;
+
+	if(numPeopleInMuseum == 0){
+		signal(lastPerson);
+	}
+
+	signal(accessCountOfPeople);
+
+
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// int visitorArrives(){
+// 	//needs to take a ticket, if no tickets available, then it leaves.
+// 	wait(accessMuseumStatus);
+// 		if(isMuseumOpen == FALSE)
+// 			return;
+// 	signal(accessMuseumStatus);
+
+
+// 	wait(accessCountOfPeople);
+
+// 	wait(accessGuideAvailable);
+
+// 		if(numPeopleInMuseum >= 10*numGuidesAvailable)
+// 			return;
+// 	signal(accessCountOfPeople);
+
+// 	signal(accessGuideAvailable);
+
+
+// 	wait(accessBooth);
+// 		if(tickets == 0)
+// 			visitorLeaves();
+// 		tickets--;
+// 	signal(accessBooth);
+
+// 	signal(numVisitors); //for guide processes
+
+// }
+
+// int tourMuseum(){
+// 	wait(guideAvailable);
+
+// 	wait(accessCountOfPeople);
+	
+// 	numPeopleInMuseum++;
+// 	tourMuseum();
+
+// 	signal(accessCountOfPeople);
+
+
+// }
+
+// int visitorLeaves() {
+
+// 	wait(accessCountOfPeople);
+
+// 	numPeopleInMuseum--;
+
+// 	signal(accessCountOfPeople);
+
+
+// }
+
+

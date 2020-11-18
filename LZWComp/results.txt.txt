@@ -1,0 +1,11 @@
+
+			texts.tar	all.tar 	assig2 		bmps.tar 	code.txt 	code2.txt 	edit.exe 	frosty.jpg 	gone_fishing.bmp 	large.txt 	Lego-big.gif 	medium.txt 	wacky.bmp 	winnt256.bmp
+LZW			989 KB		1,804 KB	73 KB		904 KB		31 KB		24 KB		245 KB		174 KB		   10 KB		591 KB		126 KB		13 KB		5 KB		156 KB
+																								
+MyLZW Do Nothing Mode	584 KB		1,751 KB	40 KB		80 KB		24 KB		21 KB		153 KB		160 KB		   9 KB			491 KB		120 KB		13 KB		4 KB		62 KB
+		
+MyLZW Reset Mode	577 KB		1,151 KB	40 KB		80 KB		24 KB		21 KB		149 KB		168 KB		   9 KB			516 KB		120 KB		13 KB		4 KB		62 KB
+			
+MyLZW Monitor Mode	584 KB		1,778 KB	40 KB		80 KB		24 KB		21 KB		153 KB		160 KB		   9 KB			491 KB		120 KB		13 KB		4 KB		62 KB
+	
+WinZip			500 KB		908 KB		22 KB		56 KB		15 KB		13 KB		118 KB		124 KB		   9 KB			463 KB		91 KB		11 KB		4 KB		45 KB

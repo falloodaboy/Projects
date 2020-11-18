@@ -1,0 +1,10 @@
+What are our decisions?
+Decision:
+one decision for every letter of the string
+where is the first letter of the string on the board?
+all characters on board are options for the first letter in the String
+First Decision -> all characters are options
+Second Decision -> feasible option is one that is not capitalized and is the next letter in the string
+Third Decison -> based off of the 2nd decision
+Nth Decision -> will depend on the N-1 decision, must backtrack if no other options are found.
+

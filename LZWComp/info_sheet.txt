@@ -1,0 +1,57 @@
+========================================
+CS/COE 1501 Assignment Information Sheet
+----------------------------------------
+
+You must submit an information sheet with every assignment.  Also be sure
+to submit all materials following the procedures described on the
+submission procedures page.
+
+Name:  Zohaib Wasim
+
+Lecture section:  E
+
+Recitation day and time:  Thursday 3-3:50pm
+
+Assignment #:  2
+
+Program due date:  March 1, 2020
+
+Handed in date:  March 1, 2020
+
+Source code file name(s): MyLZW.java
+
+
+
+
+
+
+
+Other file name(s) (if relevant):
+Queue, BinaryStdIn, BinaryStdOut, TST, StdIn, StdOut
+
+
+
+
+
+
+Does your program run without error?: Yes
+
+If not, what is/are the error(s) and which parts of your program run
+correctly?:
+
+
+
+
+
+
+
+Additional comments to the grader:
+For the monitor mode, the bits compressed would be the size of the longest prefix found which would be W, and the uncompressed would be the size of the
+longestPrefix found * 12 for each letter in the longest prefix string. This is because uncompressed would have written a static bitwidth for each ASCII
+character. This is how compressed and uncompressed were calculated in the MyLZW file.
+
+
+
+
+
+

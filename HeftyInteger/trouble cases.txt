@@ -1,0 +1,43 @@
+xgcd for a = 3456789	b = 2022
+xgcd a = 3000000000	b = 14
+taking too long on xgcd: a = 1,000,000,000 b = 14
+
+try xgcd a= 100,000,000 		b= 14 to find bug.
+
+160: 00000000 10100000
+166: 00000000 10100110
+case also causes problems with 100,000 and 7
+problem is in the multiplication. 14003, 7
+bug seemed to be in the padding, even though they look identical. Wierd...
+
+
+
+
+
+
+
+
+toMod: 123456789012345678901234567890
+isMod:1234567
+
+
+-33: 11111111 11011111
+223: 00000000 11011111
+
+
+-68005588118 * 5
+
+398469324867 * 1
+
+
+
+
+
+
+
+
+
+
+
+a		b		a/b		amodb		d	x	y
+100,000,000	14		

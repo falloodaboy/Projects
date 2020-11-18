@@ -1,0 +1,90 @@
+Plan for tomorrow:
+*1. conceptualize removal, insertion, and update of entry from either pq
+*2. implement the concepts
+*3. define the exchange function in Model class
+*4. Define Iterator for PriorityQueue.java
+*5. check to see if heap is working
+6. further define the GUI so that checks are possible
+7. change all arrays into ArrayLists
+8. Run edge case tests
+9. Write Documentation
+10. Assignment Information Sheet
+
+
+How about I keep a separate HashMap which maps cars VINS to index in the Car[] keys array so that I can still use the given heaps to get the job done?
+
+IndexMinPQ associates a number 1 -- MaxN-1 with each key and the qp array is a way to get the index of where this key's i value is in the heap. (if qp wasn't present, you
+would have to go through the entire pq to find the i value associated with a certain key to then delete it --> O(n))
+
+
+Using pre-existing work:
+	1. Need HashMap of VINS to indexes in the keys array.
+	2. Need HashMap of Brands made of models
+	3. Need 2 heaps in each Model for the cars for price and mileage. Need indexable data structures along with them.
+	4. Need 2 heaps for price and mileage for the main PriorityQueue. 
+	5. define exch function to also exchange car entries. Two cars in the heap could be in different brands and models -> Brand will maintain a HashMap of Models.
+	6. Model needs to define its own exchange function for its two heaps so that the outer exchange function only needs to call this when exchanging.
+	7. 
+
+in IndexMinPQ, exch swaps the values of the two integers in the heap and then assigns their respective i values to each number in qp.
+extra property in this class ensures that qp[pq[i]] = i. qp takes an index which is an identifier for a key and returns the index it is in the heap.
+pq takes an index for the heap and returns the key-associated integer i. Simply need to map VINS to integers in order to use this.
+
+i = 3, j = 4
+pq[i] = 7 pq[j] = 8		
+qp[i] = 3 qp[j] = 4
+
+node 7 in heap is associated with integer 3
+node 8 in heap is associated with integer 4
+
+
+pq[i] = pq[j] = 8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Min heaps for both price and mileage
+main class keeps an ordered list of brand classes
+each brand object contains an ordered list of models in a tree
+each model class contains a min heap with CarObjects for price and mileage
+each CarObject object contains the Car object and it's index in its corresponding main heap.
+
+why does every array in IndexMinPQ have maxN + 1? because function in IndexMinPQ also access location at maxN so size has to be maxN + 1
+the pq array in index holds the index value for the keys array where pq[1] is the minimum and its children are greater than it.
+the qp array, at each entry i, holds index of where it is found in pq. Index i is from the key and the qp array associates it with the
+pq array so that it is easier to retrieve. qp and keys arrays share an index where qp[i] = keys[i]
+
+instead of doing int[] for qp, could store it as String[] qp because remove prompts user for VIN. Otherwise would have to maintain a separate tree
+to account for the mapping of ints in array to VINs of vars. 
+pq would also have to be a String array as each entry holds the key for the Car object which is the VIN. 
+
+my client uses a VIN String to specify which key to delete.
+*replace static arrays with Arraylists to allow dynamic resizing. Start off with the original amount of cars in the file.
+use HashMap instead of TreeMap if amortization is possible?
+
+keep pq and qp as int arrays and have an extra data structure which maps VINS to index in the Key[] array to be used by both pq and qp
+or
+-> make qp a lookup table where VIN is a key and index in Key[] is the value. (May not need a separate data structure) (TreeMap or HashMap)
+	would have to use HashMap for this lookup table to ensure log(n) for exchange for swim and sink.
+
+
+*exch will have to make sure that all elements are properly arranged in each data structure.
+when adding a car to the data-structure: 
+	1. array entry is provided separately to allow for one function to be used for exch of price and mileage heaps
+	2. for example, for price min heap, the qp data structures must swap their indexes. so qpprice.get(key[pq[i]].vin).set(i); or something like this.
+	3. Will have to update position in the CarObject in the Models class of that car's brand as positions change. This would have to update different cars
+		in different Brand, Models, and CarObjects objects.
+	4. On the contrary, it will make search easier.
+	5. inorder to exchange, items on the heap exchange indices. Then each CarObject in their respective Models has to be updated with these indices changes.
+
+

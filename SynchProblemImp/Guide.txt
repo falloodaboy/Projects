@@ -1,0 +1,609 @@
+/*
+	shared Variables:
+	1. Visitors- (counting semaphore: initial value is 0)
+	2. Guides-	 (counting semaphore: inital value is 0)
+	3. tickets-	 (integer: initial value is tickets generated)
+	4. accessBooth- (binary semaphore: initial value is 1)
+	5. numPeopleInMuseum- (integer: initial value is 0)
+	6. accessCountOfPeople- (binary semaphore: initial value is 1)
+	7. guidesInMuseum-		(counting semaphore: initial value is 2)
+	8. guidesMutex-			(binary semaphore: initial value is 1. used to control access to the guidesInMuseum semaphore)
+	9. isMuseumOpen-		(boolean: initial value is FALSE)
+	10. accessMuseumStatus-	(binary semaphore: initial value is 1)
+	11. lastPerson- 		(binary semaphore: initial value is 0. Used by the last visitor process to release the guides)
+	12. GuidesLeft-			(integer, incremented whenever a guide opens the museum. Decrements whenever the guide leaves)
+	13. accessGuidesLeft-	(binary semaphore: initial value is 1)
+	14. GuideWaitingToLeave (boolean: initial value is false)
+	15. GWaitMutex			(binary semaphore: initial value is 1)
+	16. numVis 				(Counting Semaphore: initial value is numvisitors)
+	17. GWaitSem			(counting semaphore- initial value is 0)
+	18. areVisDone			(boolean: initial value is false)
+	19. visDoneMutex		(binary semaphore: initial value is 1)
+
+
+	11 semaphores. 7 shared variables
+
+
+	arriving tour guides will need to check if 
+
+*/
+int tourGuideArrives() {
+	//may need a mutex to access guidesInMuseum
+	
+	
+	wait(guidesInMuseum);
+
+	wait(guidesMutex); //used to make guideLeaves() atomic.
+
+	wait(numVis);
+
+
+
+
+
+
+	wait(accessBooth);
+
+	wait(visDoneMutex);
+		if(tickets == 0 && areVisDone == true || areVisDone == true){
+			signal(guidesMutex);
+			signal(guidesInMuseum);
+			signal(accessBooth);
+			signal(visDoneMutex);
+			return -1;
+		}
+	signal(accessBooth);
+
+	signal(visDoneMutex);
+	//have the guide process call open museum
+
+	signal(guidesMutex);
+
+	//place numvisitor semaphore here.
+	//check if last visitor has already gone home. If yes, then return -1. 
+
+	wait(Visitors);
+
+
+	return 0;
+	
+}
+
+int openMuseum() {
+
+
+	wait(accessGuidesLeft);
+		GuidesLeft++;
+	signal(accessGuidesLeft);
+
+
+	wait(accessMuseumStatus);
+
+		if(isMuseumOpen == FALSE)
+			isMuseumOpen == TRUE;
+	
+	signal(accessMuseumStatus);
+	
+	signal(Guides);
+
+	
+
+	//check to make sure the booth is not empty.
+	// wait(accessBooth);
+	// 	if(tickets == 0){
+	// 		signal(accessBooth);
+	// 		return;
+	// 	}
+			
+	// signal(accessBooth);
+
+	int i = 1;
+
+	for(; i < 10; i++){
+
+		wait(numVis);
+
+		
+
+
+
+		wait(accessBooth);
+
+		wait(visDoneMutex);
+
+			if(tickets == 0 && areVisDone == true || areVisDone == true){
+				signal(accessBooth);
+				signal(visDoneMutex);
+				break;
+			}
+		signal(accessBooth);
+
+		signal(visDoneMutex);
+		
+		wait(Visitors); //wait for visitors to arrive.
+
+		signal(Guides); //let a visitor tour Museum.
+
+		
+
+		
+	}	
+	return;
+}
+
+
+/*
+if a guide is done, it must check if there is another guide in the museum, 
+if there isn't then it must wait for the last person to leave before leaving and allowing another guide to come in.
+
+if a guide is done, it must check if there is another guide in the museum, if there is, it must check if this guide is waiting, 
+if it is not then this process sets guidewaitingtoleave to true and waits on sem.
+
+if a guide is done, it must check if there is another guide in the museum, if there is, it must check if this guide is waiting, 
+if it is, then this guide must wait for the last person to leave, then free the other guide and then leave itself.
+
+
+*/
+int tourGuideLeaves() {
+
+
+wait(accessGuidesLeft);
+
+
+if(GuidesLeft == 2){ //if there are 2 guides left, then the other isn't done yet.
+	
+	
+	wait(GWaitMutex);
+
+	if(guideWaitingToLeave == true){
+		wait(lastPerson);
+		
+		
+
+		wait(accessMuseumStatus);
+
+		isMuseumOpen = false;
+
+		signal(accessMuseumStatus);
+
+		signal(GWaitMutex);
+
+		wait(guidesMutex);
+
+			signal(guidesInMuseum);
+
+			signal(guidesInMuseum);
+
+		
+
+		signal(GWaitSem);
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+	}
+	else if(guideWaitingToLeave == false){
+		guideWaitingToLeave = true;
+
+		signal(GWaitMutex);
+		
+		signal(accessGuidesLeft);
+
+		wait(GWaitSem);
+
+
+		wait(GWaitMutex);
+
+		guideWaitingToLeave = false;
+
+		signal(GWaitMutex);
+
+		wait(accessGuidesLeft);
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+
+		signal(guidesMutex);
+
+		return;
+	}
+	else{
+		signal(GWaitMutex);
+	}
+	
+
+	return;
+}
+
+else if(GuidesLeft == 1){
+	wait(lastPerson);
+
+	wait(accessMuseumStatus);
+
+	isMuseumOpen = false;
+
+	signal(accessMuseumStatus);
+
+
+
+	GuidesLeft--;
+
+	signal(accessGuidesLeft);
+
+
+
+	signal(guidesInMuseum);
+}
+else if(GuidesLeft == 0){
+	signal(accessGuidesLeft);
+	signal(GuidesInMuseum);
+	}
+
+}
+
+
+
+
+
+
+
+	//guidesLeft == 1
+	// wait(GWaitMutex);
+
+	// if(guideWaitingToLeave == true){
+	// 	wait(lastPerson);
+		
+	// 	signal(GWaitSem);
+
+	// 	wait(accessMuseumStatus);
+
+	// 	isMuseumOpen = false;
+
+	// 	signal(accessMuseumStatus);
+
+	// 	signal(GWaitMutex);
+
+	// 	GuidesLeft--;
+
+	// 	signal(accessGuidesLeft);
+	// }
+	// else if(guideWaitingToLeave == false){
+	// 	signal(GWaitMutex);
+
+	// 	wait(lastPerson);
+
+	// 	wait(accessMuseumStatus);
+
+	// 	isMuseumOpen = false;
+
+	// 	signal(accessMuseumStatus);
+		
+		
+
+	// 	GuidesLeft--;
+
+	// 	signal(accessGuidesLeft);
+	// }
+
+	// return;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+wait(accessGuidesLeft);
+
+
+if(GuidesLeft == 2){ //if there are 2 guides left, then the other isn't done yet.
+	
+	
+	wait(GWaitMutex);
+
+	if(guideWaitingToLeave == true){
+		wait(lastPerson);
+		
+		signal(GWaitSem);
+
+		wait(accessMuseumStatus);
+
+		isMuseumOpen = false;
+
+		signal(accessMuseumStatus);
+
+		signal(GWaitMutex);
+
+		wait(guidesMutex);
+
+			signal(guidesInMuseum);
+
+			signal(guidesInMuseum);
+
+		signal(guidesMutex);
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+	}
+	else if(guideWaitingToLeave == false){
+		guideWaitingToLeave = true;
+
+		signal(GWaitMutex);
+		
+		signal(accessGuidesLeft);
+
+		wait(GWaitSem);
+
+		wait(accessGuidesLeft);
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+	}
+	else{
+		signal(GWaitMutex);
+	}
+	
+
+	return;
+}
+
+else if(GuidesLeft == 1){
+	
+	wait(GWaitMutex);
+
+	if(guideWaitingToLeave == true){
+		wait(lastPerson);
+		
+		signal(GWaitSem);
+
+		wait(accessMuseumStatus);
+
+		isMuseumOpen = false;
+
+		signal(accessMuseumStatus);
+
+		signal(GWaitMutex);
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+	}
+	else if(guideWaitingToLeave == false){
+		signal(GWaitMutex);
+
+		wait(lastPerson);
+
+		wait(accessMuseumStatus);
+
+		isMuseumOpen = false;
+
+		signal(accessMuseumStatus);
+		
+		
+
+		GuidesLeft--;
+
+		signal(accessGuidesLeft);
+	}
+
+	return;
+}
+else if(GuidesLeft == 0){
+	signal(accessGuidesLeft);
+	signal(GuidesInMuseum);
+}
+
+*/
+
+
+
+	// wait(GWaitMutex);
+
+	// if(GuideWaitingToLeave == false){
+	// 	signal(GWaitMutex);
+
+	// 	wait(accessGuidesLeft);
+
+	// 		if(GuidesLeft == 1){
+	// 			GuidesLeft--;
+	// 			signal(accessGuidesLeft);
+
+	// 			wait(accessMuseumStatus);
+
+	// 			isMuseumOpen = false;
+
+	// 			signal(accessMuseumStatus);
+
+	// 			wait(lastPerson);
+
+	// 			return;
+	// 		}
+	// 		else if(GuidesLeft == 2){
+	// 			GuidesLeft--;
+	// 			signal(accessGuidesLeft);
+
+	// 			wait(GWaitMutex);
+
+	// 				GuideWaitingToLeave = true;
+	// 			signal(GWaitMutex);
+
+	// 			wait(GWaitSem);
+
+	// 			return;
+	// 		}
+	// 		else if(GuidesLeft == 0){ //if there are no more visitors or tickets when this guide got the chance.
+	// 			signal(guidesInMuseum);
+	// 		}
+	// 	signal(accessGuidesLeft);	
+	// }
+
+	// else if(GuideWaitingToLeave == true){
+	// 	signal(GWaitMutex);
+
+	// 	wait(accessGuidesLeft);
+
+	// 	if(GuidesLeft == 1){
+	// 		signal(accessGuidesLeft);
+
+	// 		wait(lastPerson); //wait for the lastPerson to leave.
+
+
+
+
+	// 	}
+	// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// int tourGuideLeaves() {
+// 	wait(lastPerson); //wait for the last visitor to leave.
+	
+// 	wait(accessGuidesLeft);
+// 		if(GuidesLeft == 2){
+
+// 			wait(guidesMutex);
+			
+// 			GuidesLeft--;
+// 			signal(guidesInMuseum);
+
+// 			//release the other guide process waiting to leave.
+// 			signal(lastPerson);
+// 		}
+// 		else if(GuidesLeft == 1){	
+// 			GuidesLeft--;
+			
+
+// 			wait(accessMuseumStatus);
+// 				isMuseumOpen = FALSE;
+// 			signal(accessMuseumStatus);
+// 			//let new guide come in.
+// 			//signal(guidesInMuseum);
+// 			signal(guidesInMuseum);
+
+// 			//let the new guides processes enter the museum.
+// 			signal(guidesMutex);
+			 
+// 		}
+// 		else if(GuidesLeft == 0){ //in the event that the guide leaves if tickets are 0.
+// 			signal(guidesInMuseum);
+// 		}
+// 	signal(accessGuidesLeft);
+// 	return;
+// }
+
+
+
+
+
+
+// int tourGuideArrives() {
+
+// 	wait(guidesInMuseum);
+
+// 	wait(accessCountOfPeople);
+
+// 		numPeopleInMuseum++;
+
+// 	signal(accessCountOfPeople);
+
+// 	wait(accessGuidesBusy);
+
+// 	guidesBusy++;
+
+// 	signal(accessGuidesBusy);
+
+// 	int i = 0;
+// 	int chovies = -1;
+
+// 	for(; i < 10; i++){ //serve at most 10 visitors. 
+
+// 		wait(accessBooth);
+
+		
+// 		if(tickets == 0){
+// 			chovies = 0;
+// 		}
+
+// 		signal(accessBooth);
+
+// 		wait(numVisitors);
+
+// 		wait(accessCountOfPeople);
+
+// 		if(numPeopleInMuseum == 1 && chovies == 0){ //If there are no more tickets in the available and numPeople in Museum is 1, leave.
+// 			break;
+// 		}
+
+// 		else if(numPeopleInMuseum == 1){
+
+// 			openMuseum();
+
+// 		}
+
+// 		signal(accessCountOfPeople);
+
+// 		signal(guideAvailable);
+
+
+// 	}
+// }
+
+
+
+// int tourGuideLeaves() {
+// 	/*
+		
+// 	*/
+
+// }
+
+
+// int openMuseum() {
+// 	wait(numVisitors);
+// 	wait(accessMuseumStatus);
+	
+// 		if(isMuseumOpen == FALSE){
+// 			isMuseumOpen = TRUE;
+// 		}
+
+
+// 	signal(accessMuseumStatus)
+
+// }
+
+

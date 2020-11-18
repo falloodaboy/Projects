@@ -1,0 +1,12 @@
+For the jump/branch/next control mux, the mux should contain all of the calculated values and then new muxes will decide which value goes to the control mux select
+pin, thus only that value will be written into the PC.
+Check Instruction Decoder to see if it is working properly.
+For the J/br/next pri encoder, the first spot represents PC + 1.
+made ReadSelect0 and ReadSelect1 Rs and Rt respectively. Is this true in all cases?
+need to find a way to shorten Rs or Rt for RAM address
+only rs access the data input for RAM
+memory only writes to Rs
+ALU A needs mux because of branch with immediate
+removed the mux with DATARA and ExImm and replaced with DATARA going into ALU A.
+changed all output pins in the control so that Three State output is False.
+Test jumps and branches, fix the code executing too fast.

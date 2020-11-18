@@ -1,0 +1,115 @@
+Need to be able to find the lowest price or lowest mileage car (could use 2 heaps for this)
+Need to be able to retreive from all cars or from make and model specific cars.
+
+
+
+
+
+
+Indirection: keep track of all items in the heap so that they are mapped to the index of the item in the heap. (need to be sorted for search by VIN)
+Possible data structures for indirection:
+Heap
+Array
+Self-balancing BST
+LinkedList
+Hash Table
+Sets Data Structure
+
+
+Solution 1:
+min heap array pq based on price.
+min heap array pq2 based on  mileage.
+Indexable arrays for each make and model of car.
+
+
+advantages: fast search time (O logn)
+
+disadvantages: uses up too much space
+
+Solution 2:
+min heap for price for all cars
+min heap for mileage for all cars
+a resizable array where each element is the root of a heap data structure (allows search for make and models)
+an indexable array keeps track of all the roots in this resizable array. 
+This main array will also be the heap. 
+
+"heap of heaps" idea
+indexable array keeps the heap root for each car make in the larger heap. (should be sorted so that binary sort can work on it.) (one for mileage, one for price)
+each entry in the main heap has an indexable array which is parallel to it.
+Runtimes:
+Search from all cars: Worst case the car is in the largest heap and it is at the end of the indexable array. O(n) if unsorted array. O(logn) if sorted.
+Search from specific make and model: worst case is O(logn) if sorted array and O(n) if unsorted array.
+Deletion of a car: 
+Update a car:
+Add a car:
+
+
+
+
+Car[] keys for all of the cars entered
+Heap with indexable array heap sorted according to car price- set of all cars.
+Heap with indexable array heap sorted according to car mileage- set of all cars
+
+2d Array of object encapsulating the heap and indexable array that stores heaps of specific brand models.
+
+
+I need to be able to find a specific make and model in the heap but without a separate data structure it would be O(n)
+keep an array of all make and models by alphabetical order so that binary sorting will result in O(logn) time.
+
+
+
+use IndexMinPQ for each car make, this will be a node in the larger heap
+the main heap contains the array of this IndexMinPQ with a HashMap to allow for quick access for a specific car brand in the larger heap.
+what about searching for a specific car in that IndexMinPQ? 
+
+
+
+min heap for low price with a HashMap where each cell has another data structure to store all of the cars of that specific brand.
+TreeMap can be used instead of a HashMap as it is stagnant.
+orderd lookup table is needed to have O(logn) runtime.
+
+
+Confirmed pieces:
+min Heap of car prices
+min Heap of car mileage
+indexable array for each heap
+
+
+Possible solutions for specific brand and model:
+if the car is removed from the price and mileage heaps, they have to be removed from the specific make and model table. If a list implementation is used for the models in 
+each make in the TreeMap for removing a specific item can take a lot of time if the list is sorted according to price or mileage. need VIN number.
+
+
+TreeMap for each brand where each node contains a list of TreeMaps for all models of each brand and in each of these TreeMaps, a heap and an index array where each entry of
+this index array holds the position in the heap for all cars in this node.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

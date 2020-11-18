@@ -1,0 +1,42 @@
+BackTrackingSolver algorithm:
+decision 
+{		
+cd = 0;
+co = -1	
+}
+solution 
+{		
+char[][]  grid	
+}
+
+
+solve(decision, solution) ::
+
+isTerminalDecision? if yes, return the solution
+
+while(co < totalNumberOfOptions)
+{
+	co++;
+
+	if(is feasible)
+	{
+	 make all letters in the word upper case
+	}
+
+	recursive call(decision {	cd = 1; co = -1 }, solution { grid })
+
+	if(that recursive call doesn't return null)
+	{
+	 return this result;
+	}
+
+	otherwise
+	{
+	undo the upper casing of the word.
+	}
+
+
+
+
+}
+	

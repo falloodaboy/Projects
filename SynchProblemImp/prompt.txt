@@ -1,0 +1,10 @@
+a brief, intuitive explanation of why (or why not) your solution is fair (maximum 10 visitors per tour guide), as well as deadlock- and starvation-free.
+
+
+The solution I designed is fair because it ensures that each guide is making progress but also isn't blocking other guides from
+doing the same. Allowing each guide to server at most 10 visitors ensures that the guides inside the museum have to at some point
+give the tour guides who come after them a chance to serve visitors. Because each tour guide is equal in priority, the solution allows
+as many guides to serve as possible. The solution is starvation free because it uses semaphores for visitors and guides which have a first come first serve 
+policy, ensuring every process has a chance to run, assuming the preconditions (right amount of tickets, enough guides and visitors, etc.) are met. The solution
+is deadlock free because each function asks for only the minimal amount of resources needed and frees them as soon as possible to prevent holding onto too many
+shared variables at a time.
